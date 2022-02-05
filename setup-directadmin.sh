@@ -53,9 +53,6 @@ cd /usr/local/directadmin/custombuild
 ./build dovecot_conf
 echo "action=rewrite&value=mail_sni" >> /usr/local/directadmin/data/task.queue
 
-# Enable IPv6 if its not already.
-enable_ipv6
-
 clear
 . /usr/local/directadmin/scripts/setup.txt
 echo "Username: $adminname"
