@@ -46,7 +46,8 @@ cd /usr/local/directadmin/custombuild
 ./build clean
 ./build update
 ./build set eximconf yes
-./build set eximconf_release 4.5
+# Commented out since 4.5 should be standard and newer versions should be allowed.
+#./build set eximconf_release 4.5
 ./build set dovecot_conf yes
 ./build exim_conf
 ./build dovecot_conf
