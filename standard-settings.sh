@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Setup SSH keys authentication.
-mkdir .ssh
-chmod 700 .ssh
-mv ./authorized_keys ./.ssh/
-chmod 600 ./.ssh/authorized_keys
+mkdir ../.ssh
+chmod 700 ../.ssh
+mv ./authorized_keys ../.ssh/
+chmod 600 ../.ssh/authorized_keys
 
 # Remove default motd and replace it with an usefull one.
 rm /etc/motd
