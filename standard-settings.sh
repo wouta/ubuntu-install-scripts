@@ -3,15 +3,15 @@
 # Setup SSH keys authentication.
 mkdir .ssh
 chmod 700 .ssh
-mv ./../keys/authorized_keys /root/.ssh/
-chmod 600 /root/.ssh/authorized_keys
+mv ./authorized_keys ./.ssh/
+chmod 600 ./.ssh/authorized_keys
 
 # Remove default motd and replace it with an usefull one.
 rm /etc/motd
-mv ./../banners/00-header /etc/update-motd.d/
-mv ./../banners/10-sysinfo /etc/update-motd.d/
-mv ./../banners/10-uname /etc/update-motd.d/
-mv ./../banners/90-footer /etc/update-motd.d/
+mv 00-header /etc/update-motd.d/
+mv 10-sysinfo /etc/update-motd.d/
+mv 10-uname /etc/update-motd.d/
+mv 90-footer /etc/update-motd.d/
 chmod 777 /etc/update-motd.d/*
 
 # Update the server if needed and setup the SSH server.
