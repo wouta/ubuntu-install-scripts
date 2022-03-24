@@ -49,15 +49,8 @@ cd ..
 rm -rf directadmin-sftp-backups-master/
 rm ssh_script.zip
 
-# Enable and build LetsEncrypt.
-cd /usr/local/directadmin/custombuild
-./build rewrite_confs
-./build update
-./build letsencrypt
-
 # Request LetsEncrypt Certificates for the directadmin domain itself.
 /usr/local/directadmin/scripts/letsencrypt.sh request_single $serverhostname 4096
-/usr/local/directadmin/directadmin set ssl_redirect_host $serverhostname
 service directadmin restart
 
 # Enable multi SSL support for the mail server.
