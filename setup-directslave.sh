@@ -85,7 +85,7 @@ cp /etc/letsencrypt/live/$serverhostname/privkey.pem /usr/local/directslave/ssl/
 
 # Update conf settings.
 sed -i "s/cookie_auth_key Change_this_line_to_something_long_\&_secure/cookie_auth_key $randomdata/g" /usr/local/directslave/etc/directslave.conf
-#sed -i 's/background 	0/background 	1/g' /usr/local/directslave/etc/directslave.conf
+sed -i 's/background 	0/background 	1/g' /usr/local/directslave/etc/directslave.conf
 sed -i "/uid/ c\uid             $binduid" /usr/local/directslave/etc/directslave.conf
 sed -i "/gid/ c\gid             $bindgid" /usr/local/directslave/etc/directslave.conf
 sed -i "s/rndc_path	\/usr\/local\/bin\/rndc/rndc_path	none/g" /usr/local/directslave/etc/directslave.conf
