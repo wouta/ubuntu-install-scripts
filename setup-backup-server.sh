@@ -8,7 +8,7 @@ chmod 755 setup-standard.sh
 groupadd sftpgroup
 
 # Update sshd_config to only allow users of the sftpgroup to connect over sftp.
-sed -i "s/Subsystem(.*)/#Subsystem $1/g" /etc/ssh/sshd_config
+sed -i "s/Subsystem/#Subsystem/g" /etc/ssh/sshd_config
 echo "Subsystem sftp internal-sftp" >> /etc/ssh/sshd_config
 echo "   Match Group sftpgroup" >> /etc/ssh/sshd_config
 echo "   ChrootDirectory /backups" >> /etc/ssh/sshd_config
@@ -23,5 +23,8 @@ service sshd restart
 mv ./add_ssh_user.sh /root/
 chmod 755 /root/add_ssh_user.sh
 
-# Set the correct permission for the backup folder.
+# Make the backup directory
+mkdir /backups
+
+# Set the correct permission for the backup directory.
 chown root:root /backups
