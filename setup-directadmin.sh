@@ -7,8 +7,8 @@ if [ -z "$1" ]
 fi
 
 # First install and configure the server as a normal install.
-chmod 777 ./standard-settings.sh
-./standard-settings.sh
+chmod 755 setup-standard.sh
+./setup-standard.sh
 
 # Run Common pre-install commands
 apt -y update
