@@ -19,7 +19,7 @@ fi
 # Check if the login username is given.
 if [ -z "$1" ]
 	then
-		echo "./setup-directslave.sh <login username> <login password> <subdomain for DA (Optional)>"
+		echo "./setup-directslave.sh <login username> <login password>"
 		exit
 	else
 		echo "Username given. Continue."
@@ -28,18 +28,10 @@ fi
 # Check if the login password is given.
 if [ -z "$2" ]
 	then
-		echo "./setup-directslave.sh <login username> <login password> <subdomain for DA (Optional)>"
+		echo "./setup-directslave.sh <login username> <login password>"
 		exit
 	else
 		echo "Password given. Continue."
-fi
-
-# Check what the subdomain is for the directadmin server.
-if [ -z "$3" ]
-	then
-		dasubdomain="directadmin"
-	else
-		dasubdomain=$3
 fi
 
 # Install certbot and bind9 as DNS server.
@@ -65,19 +57,23 @@ rm /usr/local/directslave/bin/directslave-*
 cp /usr/local/directslave/etc/directslave.conf.sample /usr/local/directslave/etc/directslave.conf
 cp /usr/local/directslave/etc/passwd.sample /usr/local/directslave/etc/passwd
 
-# Collect some needed data.
+# Get the server IP for reverse DNS lookup.
 serverip=`hostname -I | awk '{print $1}'`
+
+# Get server hostname from reverse DNS lookup.
 serverhostname=`dig -x ${serverip} +short | sed 's/\.[^.]*$//'`
 
+# Remove last dot from serverhostname.
 domain=`echo $serverhostname | sed 's/^[^.]*.//g'`
-daserverip=`dig +short ${dasubdomain}.${domain}`
 
+# Random strong for cookie_auth_key.
 randomdata=`(< /dev/urandom tr -dc 'a-zA-Z0-9' | fold -w 128 | head -n 1)`
 
+# UID and GID for directslave.conf
 binduid=`id -u bind`
 bindgid=`id -g bind`
 
-# Setup certbot for safely accessing the control panel.
+# Setup certbot for safely accessing the control panel with SSL.
 certbot certonly --non-interactive --register-unsafely-without-email --agree-tos --standalone --preferred-challenges http -d $serverhostname
 
 # Setup deploy script for later renewals.
@@ -117,37 +113,6 @@ chown -R bind:bind /usr/local/directslave/
 mkdir -p /etc/bind/directslave/
 chmod 775 /etc/bind/directslave/
 
-mv /etc/bind/named.conf.options /etc/bind/named.conf.options.old
-echo "options {
-	directory \"/var/cache/bind\";
-
-	// If there is a firewall between you and nameservers you want
-	// to talk to, you may need to fix the firewall to allow multiple
-	// ports to talk.  See http://www.kb.cert.org/vuls/id/800113
-
-	// If your ISP provided one or more IP addresses for stable 
-	// nameservers, you probably want to use them as forwarders.  
-	// Uncomment the following block, and insert the addresses replacing 
-	// the all-0's placeholder.
-
-	// forwarders {
-	// 	0.0.0.0;
-	// };
-
-	//========================================================================
-	// If BIND logs error messages about the root key being expired,
-	// you will need to update your keys.  See https://www.isc.org/bind-keys
-	//========================================================================
-	dnssec-validation auto;
-
-	listen-on-v6 { any; };
-	
-	allow-query { any; };
-	allow-notify { $daserverip; };
-	allow-transfer { $daserverip; };
-	recursion no;
-};" >> /etc/bind/named.conf.options
-
 touch /etc/bind/directslave.inc
 chmod 664 /etc/bind/directslave.inc
 
@@ -156,9 +121,10 @@ service bind9 restart
 # Add the zone conf of directslave to the bind9 DNS server.
 echo "include \"/etc/bind/directslave.inc\";" >> /etc/bind/named.conf
 
-# Create a user for directslave that can login.
+# Create a user for directslave that can login into the web interface.
 /usr/local/directslave/bin/directslave --password $1:$2
 
+# Setup DirectSlave as a service.
 sed -i "s/User=named/User=bind/g" /usr/local/directslave/etc/systemd/directslave.service
 cp /usr/local/directslave/etc/systemd/directslave.service /etc/systemd/system/
 systemctl daemon-reload
