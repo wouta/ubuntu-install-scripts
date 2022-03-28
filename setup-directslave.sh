@@ -82,7 +82,7 @@ rm /usr/local/directslave/ssl/*
 cp /etc/letsencrypt/live/'$serverhostname'/fullchain.pem /usr/local/directslave/ssl/
 cp /etc/letsencrypt/live/'$serverhostname'/privkey.pem /usr/local/directslave/ssl/
 chown -R bind:bind /usr/local/directslave/ssl/
-service directslave restart' > /etc/letsencrypt/renewal-hooks/deploy/directslave.sh
+systemctl restart directslave.service' > /etc/letsencrypt/renewal-hooks/deploy/directslave.sh
 
 # Set correct permissions for deploy script.
 chmod 755 /etc/letsencrypt/renewal-hooks/deploy/directslave.sh
@@ -116,10 +116,14 @@ chmod 775 /etc/bind/directslave/
 touch /etc/bind/directslave.inc
 chmod 664 /etc/bind/directslave.inc
 
-service bind9 restart
-
 # Add the zone conf of directslave to the bind9 DNS server.
 echo "include \"/etc/bind/directslave.inc\";" >> /etc/bind/named.conf
+
+systemctl restart bind9.service
+
+echo "/etc/bind/directslave/** rw," >> /etc/apparmor.d/local/usr.sbin.named
+systemctl reload apparmor.service
+systemctl restart apparmor.service
 
 # Create a user for directslave that can login into the web interface.
 /usr/local/directslave/bin/directslave --password $1:$2
