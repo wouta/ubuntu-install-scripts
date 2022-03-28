@@ -10,7 +10,7 @@ if [ -z "$1" ]
 fi
 
 # Create a user with the home directory in the /backups folder.
-adduser --home /backups/$1 $1
+adduser --disabled-password --gecos GECOS --home /backups/$1 $1
 
 # Add the user to the sftpgroup group.
 usermod -G sftpgroup $1
