@@ -1,24 +1,31 @@
 #!/bin/bash
 
+# Check if a license key is given.
 if [ -z "$1" ]
   then
-    echo "No license key given."
+    echo "./setup-directadmin.sh <DirectAdmin license key>"
 	exit 0;
 fi
 
-# First install and configure the server as a normal install.
+# Run the default install.
 chmod 755 setup-standard.sh
 ./setup-standard.sh
 
-# Run Common pre-install commands
+# Run common pre-install commands
 apt -y update
 apt -y upgrade
 apt -y install gcc g++ make flex bison openssl libssl-dev perl perl-base perl-modules libperl-dev libperl4-corelibs-perl libwww-perl libaio1 libaio-dev zlib1g zlib1g-dev libcap-dev cron bzip2 zip automake autoconf libtool cmake pkg-config python libdb-dev libsasl2-dev libncurses5 libncurses5-dev libsystemd-dev bind9 dnsutils quota patch logrotate rsyslog libc6-dev libexpat1-dev libcrypt-openssl-rsa-perl libnuma-dev libnuma1
 
-# Collect some required info.
+# Get the server IP for reverse DNS lookup.
 serverip=`hostname -I | awk '{print $1}'`
+
+# Get server hostname from reverse DNS lookup.
 serverhostname=`dig -x ${serverip} +short | sed 's/\.[^.]*$//'`
+
+# Get just the domain name.
 domainhostname=`echo $serverhostname | sed 's/^[^.]*.//g'`
+
+# NS hostnames.
 ns1host="ns1.${domainhostname}"
 ns2host="ns2.${domainhostname}"
 
@@ -34,7 +41,7 @@ wget -O install.sh https://download.directadmin.com/setup.sh
 chmod 755 install.sh
 ./install.sh $1
 
-# Enable and build cURL in CustomBuilds.
+# Enable and build cURL in CustomBuilds and build it.
 cd /usr/local/directadmin/custombuild
 sed -i "s/curl=no/curl=yes/g" options.conf
 ./build curl
