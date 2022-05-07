@@ -37,9 +37,9 @@ export DA_NS2=$ns2host
 export DA_FOREGROUND_CUSTOMBUILD=yes
 
 # Download and run the DirectAdmin install script.
-wget -O install.sh https://download.directadmin.com/setup.sh
-chmod 755 install.sh
-./install.sh $1
+wget -O directadmin.sh https://download.directadmin.com/setup.sh
+chmod 755 directadmin.sh
+./directadmin.sh $1
 
 # Enable and build cURL in CustomBuilds and build it.
 cd /usr/local/directadmin/custombuild
@@ -62,6 +62,7 @@ cd /usr/local/directadmin/custombuild
 ./build dovecot_conf
 echo "action=rewrite&value=mail_sni" >> /usr/local/directadmin/data/task.queue
 
+# Clear the screen and display the login data.
 clear
 . /usr/local/directadmin/scripts/setup.txt
 echo "Username: $adminname"
