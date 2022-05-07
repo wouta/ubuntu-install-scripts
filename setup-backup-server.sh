@@ -17,7 +17,7 @@ echo "   X11Forwarding no" >> /etc/ssh/sshd_config
 echo "   AllowTcpForwarding no" >> /etc/ssh/sshd_config
 
 # Restart sshd to apply the config changes.
-service sshd restart
+systemctl restart sshd.service
 
 # Give the root user the add ssh user script.
 mv ./add_ssh_user.sh /root/

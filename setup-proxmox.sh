@@ -40,5 +40,5 @@ then
 
 	# Update the smartctl to use the ssacli.
 	mv /usr/sbin/smartctl /usr/sbin/smartctl.orig
-	mv smartctl /usr/sbin/smartctl
+	mv ./files/smartctl /usr/sbin/smartctl
 fi
