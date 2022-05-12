@@ -14,7 +14,7 @@ chmod 755 setup-standard.sh
 # Run common pre-install commands
 apt -y update
 apt -y upgrade
-apt -y install sshpass gcc g++ make flex bison openssl libssl-dev perl perl-base perl-modules libperl-dev libperl4-corelibs-perl libwww-perl libaio1 libaio-dev zlib1g zlib1g-dev libcap-dev cron bzip2 zip automake autoconf libtool cmake pkg-config python libdb-dev libsasl2-dev libncurses5 libncurses5-dev libsystemd-dev bind9 dnsutils quota patch logrotate rsyslog libc6-dev libexpat1-dev libcrypt-openssl-rsa-perl libnuma-dev libnuma1
+apt -y install gcc g++ make flex bison openssl libssl-dev perl perl-base perl-modules libperl-dev libperl4-corelibs-perl libwww-perl libaio1 libaio-dev zlib1g zlib1g-dev libcap-dev cron bzip2 zip automake autoconf libtool cmake pkg-config python libdb-dev libsasl2-dev libncurses5 libncurses5-dev libsystemd-dev bind9 dnsutils quota patch logrotate rsyslog libc6-dev libexpat1-dev libcrypt-openssl-rsa-perl libnuma-dev libnuma1
 
 # Get the server IP for reverse DNS lookup.
 serverip=`hostname -I | awk '{print $1}'`
@@ -41,7 +41,9 @@ wget -O directadmin.sh https://download.directadmin.com/setup.sh
 chmod 755 directadmin.sh
 ./directadmin.sh $1
 
-# Request LetsEncrypt Certificates for the directadmin domain itself.
+# Install and request LetsEncrypt Certificates for the directadmin domain itself.
+cd /usr/local/directadmin/custombuild
+./build letsencrypt
 /usr/local/directadmin/scripts/letsencrypt.sh request_single $serverhostname 4096
 systemctl restart directadmin.service
 
@@ -69,16 +71,6 @@ cd /usr/local/directadmin/custombuild
 ./build php n
 ./build rewrite_confs
 
-# Download and install sftp scripts by poralix for ssh backup support.
-cd /usr/local/directadmin/scripts/custom/
-wget -O ssh_script.zip https://github.com/poralix/directadmin-sftp-backups/archive/refs/heads/master.zip
-unzip ssh_script.zip
-cd directadmin-sftp-backups-master/
-mv ftp_*.php ./../
-cd ..
-rm -rf directadmin-sftp-backups-master/
-rm ssh_script.zip
-
 # Enable and build cURL in CustomBuilds and build it.
 cd /usr/local/directadmin/custombuild
 sed -i "s/curl=no/curl=yes/g" options.conf
@@ -89,6 +81,14 @@ cd /usr/local/directadmin/custombuild
 ./build composer
 ./build wp
 apt -y install git
+
+# Setup SSO for PHPMyAdmin.
+cd /usr/local/directadmin/
+./directadmin set one_click_pma_login 1
+service directadmin restart
+cd custombuild
+./build update
+./build phpmyadmin
 
 # Clear the screen and display the login data.
 clear
