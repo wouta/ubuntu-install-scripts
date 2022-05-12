@@ -41,7 +41,9 @@ wget -O directadmin.sh https://download.directadmin.com/setup.sh
 chmod 755 directadmin.sh
 ./directadmin.sh $1
 
-# Request LetsEncrypt Certificates for the directadmin domain itself.
+# Install and request LetsEncrypt Certificates for the directadmin domain itself.
+cd /usr/local/directadmin/custombuild
+./build letsencrypt
 /usr/local/directadmin/scripts/letsencrypt.sh request_single $serverhostname 4096
 systemctl restart directadmin.service
 
