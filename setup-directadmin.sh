@@ -90,6 +90,14 @@ cd /usr/local/directadmin/custombuild
 ./build wp
 apt -y install git
 
+# Setup SSO for PHPMyAdmin.
+cd /usr/local/directadmin/
+./directadmin set one_click_pma_login 1
+service directadmin restart
+cd custombuild
+./build update
+./build phpmyadmin
+
 # Clear the screen and display the login data.
 clear
 . /usr/local/directadmin/scripts/setup.txt
