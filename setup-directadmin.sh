@@ -84,6 +84,12 @@ cd /usr/local/directadmin/custombuild
 sed -i "s/curl=no/curl=yes/g" options.conf
 ./build curl
 
+# Install everything needed for the Pro Pack.
+cd /usr/local/directadmin/custombuild
+./build composer
+./build wp
+apt -y install git
+
 # Clear the screen and display the login data.
 clear
 . /usr/local/directadmin/scripts/setup.txt
