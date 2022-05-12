@@ -4,7 +4,7 @@
 if [ -z "$1" ]
   then
     echo "./setup-directadmin.sh <DirectAdmin license key>"
-	exit 0;
+	exit 1
 fi
 
 # Run the default install.
@@ -91,3 +91,4 @@ echo "Username: $adminname"
 echo "Password: $adminpass"
 echo "Domain: $serverhostname"
 
+exit 0
