@@ -59,6 +59,11 @@ cd /usr/local/directadmin/custombuild
 ./build dovecot_conf
 echo "action=rewrite&value=mail_sni" >> /usr/local/directadmin/data/task.queue
 
+# Enable and build cURL in CustomBuilds and build it.
+cd /usr/local/directadmin/custombuild
+sed -i "s/curl=no/curl=yes/g" options.conf
+./build curl
+
 # Change the installed PHP versions.
 cd /usr/local/directadmin/custombuild
 ./build update
@@ -70,11 +75,6 @@ cd /usr/local/directadmin/custombuild
 ./build set php3_mode php-fpm
 ./build php n
 ./build rewrite_confs
-
-# Enable and build cURL in CustomBuilds and build it.
-cd /usr/local/directadmin/custombuild
-sed -i "s/curl=no/curl=yes/g" options.conf
-./build curl
 
 # Install everything needed for the Pro Pack.
 cd /usr/local/directadmin/custombuild
