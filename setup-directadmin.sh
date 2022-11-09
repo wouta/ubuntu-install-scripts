@@ -7,6 +7,9 @@ if [ -z "$1" ]
 	exit 1
 fi
 
+echo "Configuring System Time... "
+dpkg-reconfigure tzdata
+
 # Run the default install.
 chmod 755 setup-standard.sh
 ./setup-standard.sh
@@ -35,6 +38,7 @@ export DA_HOSTNAME=$serverhostname
 export DA_NS1=$ns1host
 export DA_NS2=$ns2host
 export DA_FOREGROUND_CUSTOMBUILD=yes
+export mariadb=10.6
 
 # Download and run the DirectAdmin install script.
 wget -O directadmin.sh https://download.directadmin.com/setup.sh
@@ -52,6 +56,7 @@ echo "mail_sni=1" >> /usr/local/directadmin/conf/directadmin.conf
 systemctl restart directadmin.service
 cd /usr/local/directadmin/custombuild
 ./build clean
+./build set_fastest
 ./build update
 ./build set eximconf yes
 ./build set dovecot_conf yes
@@ -74,12 +79,14 @@ cd /usr/local/directadmin/custombuild
 ./build set php2_mode php-fpm
 ./build set php3_mode php-fpm
 ./build php n
+./build secure_php
 ./build rewrite_confs
 
 # Install everything needed for the Pro Pack.
 cd /usr/local/directadmin/custombuild
 ./build composer
 ./build wp
+./build imapsync
 apt -y install git
 
 # Setup SSO for PHPMyAdmin.
@@ -87,6 +94,7 @@ cd /usr/local/directadmin/
 ./directadmin set one_click_pma_login 1
 service directadmin restart
 cd custombuild
+./build set phpmyadmin_public no
 ./build update
 ./build phpmyadmin
 
